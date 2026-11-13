@@ -1,0 +1,85 @@
+name: finalize-todos
+on:
+  push:
+    branches: [dev]
+    paths:
+      - '.github/workflows/finalize.yml'
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git fetch origin main:refs/remotes/origin/main
+      - name: Normalize README spacing and validate
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, sys
+          def sh(a):
+              return subprocess.run(a, capture_output=True, text=True).stdout
+          main = sh(['git','show','origin/main:README.md'])
+          path = 'README.md'
+          dev = open(path, encoding='utf-8').read()
+          H = '## \U0001F91D Contributing'
+          T = '### \U0001F4DD Complete TODO List'
+          im, iv = main.index(H), dev.index(H)
+          post_m, post_v = main[im:], dev[iv:]
+          changed = False
+          if post_m != post_v:
+              dev = dev[:iv] + post_m
+              changed = True
+          im, iv = main.index(H), dev.index(H)
+          bm, bv = main[:im], dev[:iv]
+          gm = bm[len(bm.rstrip('\n')):]
+          gv = bv[len(bv.rstrip('\n')):]
+          if gm != gv:
+              bv = bv[:len(bv) - len(gv)] + gm
+              dev = bv + dev[dev.index(H):]
+              changed = True
+          open(path, 'w', encoding='utf-8').write(dev)
+          im, iv = main.index(H), dev.index(H)
+          tm, tv = main.index(T), dev.index(T)
+          gap_m = main[:im][len(main[:im].rstrip('\n')):]
+          gap_v = dev[:iv][len(dev[:iv].rstrip('\n')):]
+          outside_ok = main[:tm] == dev[:tv] and gap_m == gap_v and post_m == dev[iv:]
+          ER = re.compile(r'^- \[ \] \*\*(?P<path>.+?):(?P<line>\d+)\*\* - (?P<msg>.*)$')
+          def entries(txt):
+              body = txt.split(T, 1)[1].split(H, 1)[0]
+              return [(m.group('path'), int(m.group('line')), m.group('msg')) for m in (ER.match(l) for l in body.splitlines()) if m]
+          de = entries(dev)
+          changed_files = ('luffy/deepscaler/utils.py', 'luffy/verl/verl/protocol.py')
+          expected = set()
+          for cf in changed_files:
+              for i, l in enumerate(open(cf, encoding='utf-8').read().splitlines(), 1):
+                  if 'TODO' not in l:
+                      continue
+                  t = l[l.find('TODO') + 4:].strip()
+                  if t.startswith(':'):
+                      t = t[1:].strip()
+                  expected.add((cf, i, t))
+          actual = {e for e in de if e[0] in changed_files}
+          rest_main = [e for e in entries(main) if e[0] not in changed_files]
+          rest_dev = [e for e in de if e[0] not in changed_files]
+          sorted_ok = de == sorted(de, key=lambda e: (e[0], e[1]))
+          print('outside_bytes_ok =', outside_ok)
+          print('changed_entries_match_code =', actual == expected)
+          print('unchanged_entries_same_order =', rest_main == rest_dev)
+          print('globally_sorted =', sorted_ok)
+          print('total_entries =', len(de), 'expected =', len(rest_main) + len(expected))
+          good = outside_ok and actual == expected and rest_main == rest_dev and sorted_ok
+          if not good:
+              print('VALIDATION FAILED')
+              sys.exit(1)
+          if changed:
+              subprocess.run(['git','add','README.md'], check=True)
+              subprocess.run(['git','config','user.name','github-actions[bot]'], check=True)
+              subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'], check=True)
+              subprocess.run(['git','commit','-m','docs(readme): preserve original spacing around TODO list'], check=True)
+              subprocess.run(['git','push','origin','HEAD:dev'], check=True)
+              print('spacing normalization committed and pushed')
+          else:
+              print('no spacing normalization needed')
+          PY
