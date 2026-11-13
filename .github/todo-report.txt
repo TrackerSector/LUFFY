@@ -1,0 +1,173 @@
+parsed README entries: 226
+=== MAIN baseline alignment (code @origin/main vs README) ===
+-- luffy/verl/verl/mix_src/mix_fsdp_worker.py
+   CODE-ONLY lines=[163] :: (zhangchi.usc1992) remove this after we switch to fsdp2
+-- luffy/verl/verl/mix_src/mix_vllm_rollout.py
+   CODE-ONLY lines=[43] :: 
+-- luffy/verl/verl/models/llama/megatron/modeling_llama_megatron.py
+   CODE-ONLY lines=[37] :: 
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/arg_utils.py
+   CODE-ONLY lines=[44] :: 
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/hf_weight_loader.py
+   CODE-ONLY lines=[81] :: 
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/megatron_weight_loaders.py
+   CODE-ONLY lines=[325] :: (pad to be divided by 4)
+   CODE-ONLY lines=[337] :: remove dependencies from megatron
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_5_4/hf_weight_loader.py
+   CODE-ONLY lines=[32] :: 
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/hf_weight_loader.py
+   CODE-ONLY lines=[29] :: 
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/llm.py
+   CODE-ONLY lines=[170] :: (sgm): we can optimize it by making the dataloader yield List[int] without padding.
+   CODE-ONLY lines=[186] :: (shengguangming): can be optimzied by rewrite the Sampler._get_logprobs() logits
+   CODE-ONLY lines=[147] :: check usagecontext
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/llm_engine_sp.py
+   CODE-ONLY lines=[336] :: (sgm): add for verl but we may not tokenizer in Rollout
+   CODE-ONLY lines=[174] :: (woosuk): Print more configs in debug mode.
+   CODE-ONLY lines=[345] :: check whether we should rebuild the CUDAGraph every iter when offload/load KVCache
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/megatron_weight_loaders.py
+   CODE-ONLY lines=[273] :: (shengguangming): latest commit in vllm fix awq for this function and add load_weights
+   CODE-ONLY lines=[68] :: check megatron
+   CODE-ONLY lines=[255] :: need to implement a general way to deal with prefix
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/model_loader.py
+   CODE-ONLY lines=[170, 273] :: (sgm): This is a hack, we need to register the load_weight() func for each model in vllm
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/parallel_state.py
+   CODE-ONLY lines=[97] :: (sgm): deviate from the v0.5.4, not pp now
+   CODE-ONLY lines=[144, 172, 257] :: check why True is not work in Ray trainer
+   CODE-ONLY lines=[185, 262] :: init using device mesh (not support hybrid engine now)
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/spmd_gpu_executor.py
+   CODE-ONLY lines=[246] :: (sgm): not implemented async executor yet
+   CODE-ONLY lines=[73] :: (sgm): verl not support speculative decode now
+-- luffy/verl/verl/third_party/vllm/vllm_v_0_6_3/worker.py
+   CODE-ONLY lines=[311] :: (sgm): check whether need this
+   CODE-ONLY lines=[33] :: (sgm): check why vllm has similar file in vllm.model_executor.parallel_utils.parallel_state
+   CODE-ONLY lines=[110] :: (sgm): set correct model runner class
+   CODE-ONLY lines=[92] :: we don't need driver
+-- luffy/verl/verl/trainer/fsdp_sft_trainer.py
+   CODE-ONLY lines=[16] :: (zhangchi.usc1992)
+-- luffy/verl/verl/utils/megatron/tensor_parallel.py
+   CODE-ONLY lines=[137] :: (zhangchi.usc1992): We may change the implementation later"""
+-- luffy/verl/verl/utils/torch_functional.py
+   CODE-ONLY lines=[171] :: optimize this.
+   CODE-ONLY lines=[162] :: optimize this. Technically, we only need one broadcast
+-- luffy/verl/verl/workers/fsdp_workers.py
+   CODE-ONLY lines=[197] :: (zhangchi.usc1992) remove this after we switch to fsdp2
+-- luffy/verl/verl/workers/rollout/hf_rollout.py
+   CODE-ONLY lines=[16] :: refactor this class. Currently, it will hang when using FSDP HybridShard. We should actually create a single GPU model.
+-- luffy/verl/verl/workers/rollout/vllm_rollout/vllm_rollout.py
+   CODE-ONLY lines=[43] :: 
+-- luffy/verl/verl/workers/sharding_manager/megatron_vllm.py
+   CODE-ONLY lines=[273] :: (zhangchi.usc1992): currently, the implementation is adhoc. We can move this function to the model
+alignment: 22 file(s) with differences; code_total=266 readme_total=226
+
+=== main->dev changed .py files ===
+  .github/scripts/todo_sync.py
+  luffy/deepscaler/utils.py
+  luffy/verl/verl/protocol.py
+
+entries after transform: 222 (was 226)
+
+--- dev TODOs in .github/scripts/todo_sync.py ---
+  2: List with TODO markers in *.py files.
+  17: List"
+  46: ")
+  58: ", ref, "--", "*.py"],
+  212: s in {path} ---")
+  236: sync dry-run report",
+  252: List for dev branch",
+  old README entries for file: 0; new: 7
+
+--- dev TODOs in luffy/deepscaler/utils.py ---
+  45: Add logging for API calls and errors
+  46: Support batch processing for multiple prompts
+  47: Add timeout configuration for API calls
+  107: Implement Vertex AI initialization and authentication
+  108: Configure safety settings for content generation
+  109: Set up GenerativeModel with proper system instructions
+  110: Implement retry logic with exponential backoff
+  111: Add comprehensive error handling for API access issues
+  112: Handle rate limiting and quota management
+  113: Implement response validation and text extraction
+  114: Add support for different generation configurations
+  old README entries for file: 16; new: 11
+
+--- dev TODOs in luffy/verl/verl/protocol.py ---
+  114: Optimize memory usage during tensor reshaping
+  115: Add support for different tensor types and shapes
+  136: Optimize tensor view operations for performance
+  137: Add error handling for invalid batch dimensions
+  169: (zhangchi.usc1992) add consistency check
+  265: we can actually lift this restriction if needed
+  351: (zhangchi.usc1992) whether to copy
+  old README entries for file: 13; new: 7
+
+=== planned section diff (entry lines) ===
+--- readme-old-section
++++ readme-new-section
+@@ -1,19 +1,21 @@
+-- [ ] **luffy/deepscaler/utils.py:45** - Implement OpenAI API client initialization
+-- [ ] **luffy/deepscaler/utils.py:46** - Add proper authentication handling
+-- [ ] **luffy/deepscaler/utils.py:47** - Implement exponential backoff retry logic for rate limits
+-- [ ] **luffy/deepscaler/utils.py:48** - Add comprehensive error handling for different API errors
+-- [ ] **luffy/deepscaler/utils.py:49** - Implement response parsing and validation
+-- [ ] **luffy/deepscaler/utils.py:50** - Add logging for API calls and errors
+-- [ ] **luffy/deepscaler/utils.py:51** - Support batch processing for multiple prompts
+-- [ ] **luffy/deepscaler/utils.py:52** - Add timeout configuration for API calls
+-- [ ] **luffy/deepscaler/utils.py:88** - Implement Vertex AI initialization and authentication
+-- [ ] **luffy/deepscaler/utils.py:89** - Configure safety settings for content generation
+-- [ ] **luffy/deepscaler/utils.py:90** - Set up GenerativeModel with proper system instructions
+-- [ ] **luffy/deepscaler/utils.py:91** - Implement retry logic with exponential backoff
+-- [ ] **luffy/deepscaler/utils.py:92** - Add comprehensive error handling for API access issues
+-- [ ] **luffy/deepscaler/utils.py:93** - Handle rate limiting and quota management
+-- [ ] **luffy/deepscaler/utils.py:94** - Implement response validation and text extraction
+-- [ ] **luffy/deepscaler/utils.py:95** - Add support for different generation configurations
++- [ ] **.github/scripts/todo_sync.py:2** - List with TODO markers in *.py files.
++- [ ] **.github/scripts/todo_sync.py:17** - List"
++- [ ] **.github/scripts/todo_sync.py:46** - ")
++- [ ] **.github/scripts/todo_sync.py:58** - ", ref, "--", "*.py"],
++- [ ] **.github/scripts/todo_sync.py:212** - s in {path} ---")
++- [ ] **.github/scripts/todo_sync.py:236** - sync dry-run report",
++- [ ] **.github/scripts/todo_sync.py:252** - List for dev branch",
++- [ ] **luffy/deepscaler/utils.py:45** - Add logging for API calls and errors
++- [ ] **luffy/deepscaler/utils.py:46** - Support batch processing for multiple prompts
++- [ ] **luffy/deepscaler/utils.py:47** - Add timeout configuration for API calls
++- [ ] **luffy/deepscaler/utils.py:107** - Implement Vertex AI initialization and authentication
++- [ ] **luffy/deepscaler/utils.py:108** - Configure safety settings for content generation
++- [ ] **luffy/deepscaler/utils.py:109** - Set up GenerativeModel with proper system instructions
++- [ ] **luffy/deepscaler/utils.py:110** - Implement retry logic with exponential backoff
++- [ ] **luffy/deepscaler/utils.py:111** - Add comprehensive error handling for API access issues
++- [ ] **luffy/deepscaler/utils.py:112** - Handle rate limiting and quota management
++- [ ] **luffy/deepscaler/utils.py:113** - Implement response validation and text extraction
++- [ ] **luffy/deepscaler/utils.py:114** - Add support for different generation configurations
+ - [ ] **luffy/test.py:1590** - add smaller page sizes when https://github.com/Dao-AILab/flash-attention/pull/824 is merged
+ - [ ] **luffy/verl/examples/split_placement/split_monkey_patch.py:141** - make a canonical logger that supports various backend
+ - [ ] **luffy/verl/tests/e2e/check_results.py:21** - this function needs error handling
+@@ -52,19 +54,13 @@
+ - [ ] **luffy/verl/verl/models/llama/megatron/modeling_llama_megatron.py:588** - for better performance, the sp padding should be removed at each layer. Not sure the performance gap
+ - [ ] **luffy/verl/verl/models/registry.py:21** - (sgm): HF may supported more than listed here, we should add more after testing
+ - [ ] **luffy/verl/verl/models/transformers/llama.py:88** - These transpose are quite inefficient but Flash Attention requires the layout [batch_size, sequence_length, num_heads, head_dim]. We would need to refactor the KV cache
+-- [ ] **luffy/verl/verl/protocol.py:114** - Implement batch dimension folding for efficient processing
+-- [ ] **luffy/verl/verl/protocol.py:115** - Add validation for batch size compatibility
+-- [ ] **luffy/verl/verl/protocol.py:116** - Handle edge cases where batch_size is not divisible by new_batch_size
+-- [ ] **luffy/verl/verl/protocol.py:117** - Optimize memory usage during tensor reshaping
+-- [ ] **luffy/verl/verl/protocol.py:118** - Add support for different tensor types and shapes
+-- [ ] **luffy/verl/verl/protocol.py:131** - Implement batch dimension unfolding functionality
+-- [ ] **luffy/verl/verl/protocol.py:132** - Add support for variable batch dimensions
+-- [ ] **luffy/verl/verl/protocol.py:133** - Optimize tensor view operations for performance
+-- [ ] **luffy/verl/verl/protocol.py:134** - Handle non-tensor batch data reshaping properly
+-- [ ] **luffy/verl/verl/protocol.py:135** - Add error handling for invalid batch dimensions
+-- [ ] **luffy/verl/verl/protocol.py:156** - (zhangchi.usc1992) add consistency check
+-- [ ] **luffy/verl/verl/protocol.py:252** - we can actually lift this restriction if needed
+-- [ ] **luffy/verl/verl/protocol.py:338** - (zhangchi.usc1992) whether to copy
++- [ ] **luffy/verl/verl/protocol.py:114** - Optimize memory usage during tensor reshaping
++- [ ] **luffy/verl/verl/protocol.py:115** - Add support for different tensor types and shapes
++- [ ] **luffy/verl/verl/protocol.py:136** - Optimize tensor view operations for performance
++- [ ] **luffy/verl/verl/protocol.py:137** - Add error handling for invalid batch dimensions
++- [ ] **luffy/verl/verl/protocol.py:169** - (zhangchi.usc1992) add consistency check
++- [ ] **luffy/verl/verl/protocol.py:265** - we can actually lift this restriction if needed
++- [ ] **luffy/verl/verl/protocol.py:351** - (zhangchi.usc1992) whether to copy
+ - [ ] **luffy/verl/verl/single_controller/ray/base.py:439** - create a class with customizable name
+ - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_3_1/arg_utils.py:64** - (shengguangming): delete the unused args
+ - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_3_1/arg_utils.py:147** - (woosuk): Support fine-grained seeds (e.g., seed per request).
+
+sort order check: OK
