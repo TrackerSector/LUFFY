@@ -76,6 +76,21 @@ def git_grep_todos(ref):
     return result
 
 
+MARKER_AUDIT_RE = re.compile(r"todo|fixme|xxx", re.IGNORECASE)
+
+
+def audit_changed_files(changed):
+    out("\n=== exhaustive marker audit of changed files (todo/fixme/xxx) ===")
+    for path in changed:
+        full = os.path.join(ROOT, path)
+        if not os.path.exists(full):
+            continue
+        with open(full, encoding="utf-8", errors="replace") as f:
+            for lineno, raw in enumerate(f.read().splitlines(), start=1):
+                if MARKER_AUDIT_RE.search(raw):
+                    out(f"  {path}:{lineno}: {raw.strip()}")
+
+
 def worktree_todos(path):
     full = os.path.join(ROOT, path)
     if not os.path.exists(full):
@@ -121,7 +136,9 @@ def entry_key(raw):
 
 def changed_py_files():
     out = git("diff", "--name-only", f"{MAIN}...HEAD")
-    return [p for p in out.splitlines() if p.endswith(".py")]
+    # CI/automation helpers under .github are not project source code
+    return [p for p in out.splitlines()
+            if p.endswith(".py") and not p.startswith(".github/")]
 
 
 def build_new_entries(entries, changed):
@@ -204,6 +221,8 @@ def main():
     out("\n=== main->dev changed .py files ===")
     for p in changed:
         out("  " + p)
+
+    audit_changed_files(changed)
 
     combined, per_file = build_new_entries(entries, changed)
     out(f"\nentries after transform: {len(combined)} (was {len(entries)})")
