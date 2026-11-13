@@ -61,21 +61,31 @@ parsed README entries: 226
 alignment: 22 file(s) with differences; code_total=266 readme_total=226
 
 === main->dev changed .py files ===
-  .github/scripts/todo_sync.py
   luffy/deepscaler/utils.py
   luffy/verl/verl/protocol.py
 
-entries after transform: 222 (was 226)
+=== exhaustive marker audit of changed files (todo/fixme/xxx) ===
+  luffy/deepscaler/utils.py:45: # TODO: Add logging for API calls and errors
+  luffy/deepscaler/utils.py:46: # TODO: Support batch processing for multiple prompts
+  luffy/deepscaler/utils.py:47: # TODO: Add timeout configuration for API calls
+  luffy/deepscaler/utils.py:107: # TODO: Implement Vertex AI initialization and authentication
+  luffy/deepscaler/utils.py:108: # TODO: Configure safety settings for content generation
+  luffy/deepscaler/utils.py:109: # TODO: Set up GenerativeModel with proper system instructions
+  luffy/deepscaler/utils.py:110: # TODO: Implement retry logic with exponential backoff
+  luffy/deepscaler/utils.py:111: # TODO: Add comprehensive error handling for API access issues
+  luffy/deepscaler/utils.py:112: # TODO: Handle rate limiting and quota management
+  luffy/deepscaler/utils.py:113: # TODO: Implement response validation and text extraction
+  luffy/deepscaler/utils.py:114: # TODO: Add support for different generation configurations
+  luffy/verl/verl/protocol.py:112: Fold a batch dim from [bsz, xxx] into [new_bsz, bsz // new_bsz, xxx]
+  luffy/verl/verl/protocol.py:114: # TODO: Optimize memory usage during tensor reshaping
+  luffy/verl/verl/protocol.py:115: # TODO: Add support for different tensor types and shapes
+  luffy/verl/verl/protocol.py:136: # TODO: Optimize tensor view operations for performance
+  luffy/verl/verl/protocol.py:137: # TODO: Add error handling for invalid batch dimensions
+  luffy/verl/verl/protocol.py:169: # TODO(zhangchi.usc1992) add consistency check
+  luffy/verl/verl/protocol.py:265: # TODO: we can actually lift this restriction if needed
+  luffy/verl/verl/protocol.py:351: # TODO (zhangchi.usc1992) whether to copy
 
---- dev TODOs in .github/scripts/todo_sync.py ---
-  2: List with TODO markers in *.py files.
-  17: List"
-  46: ")
-  58: ", ref, "--", "*.py"],
-  212: s in {path} ---")
-  236: sync dry-run report",
-  252: List for dev branch",
-  old README entries for file: 0; new: 7
+entries after transform: 215 (was 226)
 
 --- dev TODOs in luffy/deepscaler/utils.py ---
   45: Add logging for API calls and errors
@@ -104,7 +114,7 @@ entries after transform: 222 (was 226)
 === planned section diff (entry lines) ===
 --- readme-old-section
 +++ readme-new-section
-@@ -1,19 +1,21 @@
+@@ -1,19 +1,14 @@
 -- [ ] **luffy/deepscaler/utils.py:45** - Implement OpenAI API client initialization
 -- [ ] **luffy/deepscaler/utils.py:46** - Add proper authentication handling
 -- [ ] **luffy/deepscaler/utils.py:47** - Implement exponential backoff retry logic for rate limits
@@ -121,13 +131,6 @@ entries after transform: 222 (was 226)
 -- [ ] **luffy/deepscaler/utils.py:93** - Handle rate limiting and quota management
 -- [ ] **luffy/deepscaler/utils.py:94** - Implement response validation and text extraction
 -- [ ] **luffy/deepscaler/utils.py:95** - Add support for different generation configurations
-+- [ ] **.github/scripts/todo_sync.py:2** - List with TODO markers in *.py files.
-+- [ ] **.github/scripts/todo_sync.py:17** - List"
-+- [ ] **.github/scripts/todo_sync.py:46** - ")
-+- [ ] **.github/scripts/todo_sync.py:58** - ", ref, "--", "*.py"],
-+- [ ] **.github/scripts/todo_sync.py:212** - s in {path} ---")
-+- [ ] **.github/scripts/todo_sync.py:236** - sync dry-run report",
-+- [ ] **.github/scripts/todo_sync.py:252** - List for dev branch",
 +- [ ] **luffy/deepscaler/utils.py:45** - Add logging for API calls and errors
 +- [ ] **luffy/deepscaler/utils.py:46** - Support batch processing for multiple prompts
 +- [ ] **luffy/deepscaler/utils.py:47** - Add timeout configuration for API calls
@@ -142,7 +145,7 @@ entries after transform: 222 (was 226)
  - [ ] **luffy/test.py:1590** - add smaller page sizes when https://github.com/Dao-AILab/flash-attention/pull/824 is merged
  - [ ] **luffy/verl/examples/split_placement/split_monkey_patch.py:141** - make a canonical logger that supports various backend
  - [ ] **luffy/verl/tests/e2e/check_results.py:21** - this function needs error handling
-@@ -52,19 +54,13 @@
+@@ -52,19 +47,13 @@
  - [ ] **luffy/verl/verl/models/llama/megatron/modeling_llama_megatron.py:588** - for better performance, the sp padding should be removed at each layer. Not sure the performance gap
  - [ ] **luffy/verl/verl/models/registry.py:21** - (sgm): HF may supported more than listed here, we should add more after testing
  - [ ] **luffy/verl/verl/models/transformers/llama.py:88** - These transpose are quite inefficient but Flash Attention requires the layout [batch_size, sequence_length, num_heads, head_dim]. We would need to refactor the KV cache
