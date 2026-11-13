@@ -1,0 +1,64 @@
+name: verify-todos
+on:
+  push:
+    branches: [dev]
+    paths:
+      - '.github/workflows/verify.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git fetch origin main:refs/remotes/origin/main
+      - name: Verify README TODO sync result
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, sys
+          def sh(a):
+              return subprocess.run(a, capture_output=True, text=True).stdout
+          main_txt = sh(['git','show','origin/main:README.md'])
+          dev_txt = open('README.md', encoding='utf-8').read()
+          TITLE = '### \U0001F4DD Complete TODO List'
+          END = '## \U0001F91D Contributing'
+          ER = re.compile(r'^- \[ \] \*\*(?P<path>.+?):(?P<line>\d+)\*\* - (?P<msg>.*)$')
+          def parse(txt):
+              body = txt.split(TITLE, 1)[1].split(END, 1)[0]
+              return [(m.group('path'), int(m.group('line')), m.group('msg')) for m in (ER.match(l) for l in body.splitlines()) if m]
+          main_e = parse(main_txt)
+          dev_e = parse(dev_txt)
+          changed = ('luffy/deepscaler/utils.py', 'luffy/verl/verl/protocol.py')
+          expected = set()
+          for path in changed:
+              for i, l in enumerate(open(path, encoding='utf-8').read().splitlines(), 1):
+                  if 'TODO' not in l:
+                      continue
+                  t = l[l.find('TODO') + 4:].strip()
+                  if t.startswith(':'):
+                      t = t[1:].strip()
+                  expected.add((path, i, t))
+          actual = set(e for e in dev_e if e[0] in changed)
+          unch_main = [e for e in main_e if e[0] not in changed]
+          unch_dev = [e for e in dev_e if e[0] not in changed]
+          results = []
+          def chk(name, ok, detail=''):
+              results.append((name, bool(ok), detail))
+          chk('title/prefix unchanged vs main', main_txt.split(TITLE)[0] == dev_txt.split(TITLE)[0] and main_txt.count(TITLE) == 1 and dev_txt.count(TITLE) == 1)
+          chk('contributing suffix unchanged', main_txt.split(END)[1] == dev_txt.split(END)[1])
+          chk('unchanged-path entries preserved in same order', unch_main == unch_dev, f'{len(unch_main)} vs {len(unch_dev)}')
+          chk('changed-file README entries equal fresh dev code scan', actual == expected, f'missing={sorted(expected-actual)[:10]} extra={sorted(actual-expected)[:10]}')
+          chk('dev list globally sorted by (path,line)', dev_e == sorted(dev_e, key=lambda e: (e[0], e[1])))
+          total_expected = len(unch_main) + len(expected)
+          chk('total entry count', len(dev_e) == total_expected, f'{len(dev_e)} vs {total_expected}')
+          removed = ['Implement OpenAI API client initialization','Add proper authentication handling','Implement exponential backoff retry logic for rate limits','Implement response parsing and validation','Implement batch dimension folding for efficient processing','Add validation for batch size compatibility','Handle edge cases where batch_size is not divisible by new_batch_size','Implement batch dimension unfolding functionality','Add support for variable batch dimensions','Handle non-tensor batch data reshaping properly']
+          present = [r for r in removed if r in dev_txt]
+          chk('completed items removed from README', not present, str(present))
+          for name, ok, detail in results:
+              print('PASS' if ok else 'FAIL', name, '' if ok else detail)
+          fails = [r for r in results if not r[1]]
+          print(f'SUMMARY {len(results)-len(fails)} passed, {len(fails)} failed; entries={len(dev_e)} expected={total_expected}')
+          sys.exit(1 if fails else 0)
+          PY
