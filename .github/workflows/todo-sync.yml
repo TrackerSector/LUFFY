@@ -19,6 +19,6 @@ jobs:
         run: git fetch origin main:refs/remotes/origin/main
       - name: Run TODO sync
         env:
-          MODE: check
+          MODE: apply
           MAIN_REF: origin/main
         run: python3 .github/scripts/todo_sync.py
