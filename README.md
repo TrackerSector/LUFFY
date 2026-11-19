@@ -161,6 +161,7 @@ LUFFY/
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/tokenizer.py:61** - (sgm): the lora tokenizer is also passed, but may be different
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/worker.py:30** - (sgm): check why vllm has similar file in vllm.model_executor.parallel_utils.parallel_state
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/worker.py:270** - (sgm): check whether need this
+- [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_4_2/worker.py** - (sgm): check whether need this
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_5_4/arg_utils.py:53** - (sgm): check this
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_5_4/arg_utils.py:54** - (sgm): check this
 - [ ] **luffy/verl/verl/third_party/vllm/vllm_v_0_5_4/arg_utils.py:143** - (shengguangming): delete the unused args
@@ -242,7 +243,7 @@ LUFFY/
 - [ ] **luffy/verl/verl/workers/critic/megatron_critic.py:176** - we may use the new schedule instead
 - [ ] **luffy/verl/verl/workers/fsdp_workers.py:88** - (sgm): support FSDP hybrid shard for larger model
 - [ ] **luffy/verl/verl/workers/fsdp_workers.py:117** - it seems that manual offload is slowly than FSDP offload
-- [ ] **luffy/verl/verl/workers/fsdp_workers.py:157** - (zhangchi.usc1992) 1. support create from random initialized model. 2. Support init with FSDP directly
+- [ ] **luffy/verl/verl/workers/fsdp_workers.py:157** - (zhangchi.usc1992): 1. support create from random initialized model. 2. Support init with FSDP directly
 - [ ] **luffy/verl/verl/workers/fsdp_workers.py:225** - (zhangchi.usc1992, shengguangming) fix me. Current, auto_wrap_policy causes HFRollout to hang in Gemma
 - [ ] **luffy/verl/verl/workers/fsdp_workers.py:233** - add transformer policy
 - [ ] **luffy/verl/verl/workers/fsdp_workers.py:252** - add more optimizer args into config
